@@ -28,10 +28,14 @@ def draw_detections(img, detections):
 
     return img
 
+
 def video_stream():
     while(True):
         ret, frame = capture.read()
+        cv2.imshow('frame', frame)
 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 if __name__ == "__main__":
 
@@ -43,27 +47,9 @@ if __name__ == "__main__":
     capture = cv2.VideoCapture(
         'rtsp://admin:Hopelovemws_59@192.168.1.50:554/11')
 
-    while(True):
-        # Capture the video frame
-        # by frame
-        ret, frame = capture.read()
-
-        if not frame is None:
-            if ret:
-                # Detect the Frame with DeepStack using the Python SDK
-                detections = detection.detectObject(frame,output=None)
-
-                # Draw the detections on the frame
-                frame = draw_detections(frame, detections)
-
-                # Display the frame and the detections
-                cv2.imshow('frame', frame)
-
-        # the 'q' button is set as the
-        # quitting button you may use any
-        # desired button of your choice
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    # do thread video stream right here.
+    videoStreamThread = threading.Thread(target=video_stream, args=())
+    videoStreamThread.start()
 
     # After the loop release the cap detectionect
     capture.release()
