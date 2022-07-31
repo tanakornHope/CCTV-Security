@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # Initiate Connection to iPhone IP Camera
     capture = cv2.VideoCapture(
-        'rtsp://admin:Hopelovemws_59@192.168.1.50:554/11')
+        'rtsp://admin:Hopelovemws_59@192.168.1.51:554/11')
 
     # do thread video stream right here.
     videoStreamThread = threading.Thread(target=video_stream, args=())
