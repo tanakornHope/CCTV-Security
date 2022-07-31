@@ -1,8 +1,12 @@
 import cv2
 import threading
+import numpy as np
 # Import DeepStack's Python SDK
 from deepstack_sdk import ServerConfig, Detection
 
+class globalBS():
+    bsA = "F"
+    bsB = "U"
 
 # Function to draw detections and object names on camera frames
 def draw_detections(img, detections):
@@ -29,29 +33,44 @@ def draw_detections(img, detections):
     return img
 
 
+def objDetectionProcessor():
+    while(True):
+        if not isinstance(globalBS.bsA, str):
+            detections = detection.detectObject(globalBS.bsA,output=None)
+            processedframe = draw_detections(globalBS.bsA, detections)
+            # Display the frame and the detections
+            cv2.imshow('frame', processedframe)
+            cv2.waitKey(100)
+
 def video_stream():
     while(True):
         ret, frame = capture.read()
-        cv2.imshow('frame', frame)
+        globalBS.bsA = frame
+        # f = frame
+        """ if cv2.waitKey(1) & 0xFF == ord('q'):
+            break """
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    """ capture.release()
+    cv2.destroyAllWindows() """
 
 if __name__ == "__main__":
 
     # Initiate Connection to DeepStack
     config = ServerConfig("http://localhost:3000")
+    global detection 
     detection = Detection(config)
+    global capture, f
 
-    # Initiate Connection to iPhone IP Camera
     capture = cv2.VideoCapture(
         'rtsp://admin:Hopelovemws_59@192.168.1.51:554/11')
 
     # do thread video stream right here.
-    videoStreamThread = threading.Thread(target=video_stream, args=())
-    videoStreamThread.start()
+    t1 = threading.Thread(target=video_stream, args=())
+    t1.start()
+    # do thread as image processing right here.
+    t2 = threading.Thread(target=objDetectionProcessor, args=())
+    t2.start()
 
-    # After the loop release the cap detectionect
-    capture.release()
-    # Destroy all the windows
-    cv2.destroyAllWindows()
+
+
+
