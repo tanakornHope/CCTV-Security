@@ -5,8 +5,8 @@ import numpy as np
 from deepstack_sdk import ServerConfig, Detection
 
 class globalBS():
-    bsA = "F"
-    bsB = "U"
+    bsA = None
+    bsB = None
 
 # Function to draw detections and object names on camera frames
 def draw_detections(img, detections):
@@ -35,12 +35,12 @@ def draw_detections(img, detections):
 
 def objDetectionProcessor():
     while(True):
-        if not isinstance(globalBS.bsA, str):
+        if not globalBS.bsA is None:
             detections = detection.detectObject(globalBS.bsA,output=None)
             processedframe = draw_detections(globalBS.bsA, detections)
             # Display the frame and the detections
             cv2.imshow('frame', processedframe)
-            cv2.waitKey(100)
+            cv2.waitKey(1)
 
 def video_stream():
     while(True):
